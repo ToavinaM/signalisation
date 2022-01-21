@@ -31,8 +31,8 @@ public class ServiceRegionImp implements ServiceRegion{
     }
 
     @Override
-    public List<Signal> signalRegions() throws Exception {
-         return rep.signalRegions();
+    public List<Signal> signalRegions(String idRegion) throws Exception {
+         return rep.signalRegions(idRegion);
     }
     
     

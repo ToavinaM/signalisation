@@ -17,7 +17,7 @@ public interface RepositoryBack {
     List<Signal> signals()throws Exception;
     Integer updateSignal (int idSignal,String lastStatus) throws Exception;
     Integer historique  (int idSignal, String status ) throws Exception ;
-    List<StatStatus> getStatStatus()throws Exception;
+    List<StatStatus> getStatStatus(String key)throws Exception;
 
     
     

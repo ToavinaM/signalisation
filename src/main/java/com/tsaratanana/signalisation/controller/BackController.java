@@ -55,42 +55,6 @@ public class BackController {
         return "data:image/jpeg;base64,"+new String(Base64.encodeBase64(bytes), "UTF-8");
     }
     
-    @GetMapping("/lien")
-    public String signals (String lat,String lon,String key) {
-        String r="";
-        try{
-            JSONObject json = serv.readJsonFromUrl("https://nominatim.openstreetmap.org/reverse?format=json&lat="+lat+"&lon="+lon+"&zoom=27");
-            r=json.getJSONObject("address").getString(key);
-            System.out.println(json.toString());
-      }
-      catch(IOException e){
-      }
-	return r;	
-    }
-    
-    
-    
-    
-    
-    
-    @GetMapping("/liens")
-    public Map<String,Object> signalss (String lat,String lon,String key) {
-        JSONObject json=null;
-        JSONObject v=null;
-        try{
-            json = serv.readJsonFromUrl("https://nominatim.openstreetmap.org/reverse?format=json&lat="+lat+"&lon="+lon+"&zoom=27");
-             v=json.getJSONObject("address");
-              System.out.println(json.toString());
-      }
-      catch(IOException e){
-      }
-       
-         System.err.println(json.getJSONObject("address").getClass());
-	return v.toMap();
-    }
-    
-    
-    
     @PostMapping("/admin")
     public ResponseEntity<Map<String,String>> huhu(@RequestBody Map<Object,Object> adminMap)throws Exception{
         String log = (String) adminMap.get("login");
@@ -108,13 +72,13 @@ public class BackController {
         }
     }
     
-    @GetMapping("/statStatus")
+    @GetMapping("status/statistiques")
     public ResponseEntity<Map<String,Object>> statStatus (HttpServletRequest request,@RequestHeader(name = "Authorization") String authHeader) {
             Map<String,Object> map = new HashMap<>();
             try {
                 verifierTokenAdmin(authHeader, request);
                 System.out.println("MANDE NY ITOOOOOOO"+request.getAttribute("idAdmin"));
-                List<StatStatus>  listSignals = serv.getStatStatus();
+                List<StatStatus>  listSignals = serv.getStatStatus("status");
                 map.put("message", "liste SIGNL");
                 map.put("status", "200");
                 map.put("data",listSignals);
@@ -125,6 +89,44 @@ public class BackController {
                 return new ResponseEntity<>(map,HttpStatus.OK);
             }
     }
+    @GetMapping("region/statistiques")
+    public ResponseEntity<Map<String,Object>> statRegion (HttpServletRequest request,@RequestHeader(name = "Authorization") String authHeader) {
+            Map<String,Object> map = new HashMap<>();
+            try {
+                verifierTokenAdmin(authHeader, request);
+                System.out.println("MANDE NY ITOOOOOOO"+request.getAttribute("idAdmin"));
+                List<StatStatus>  listSignals = serv.getStatStatus("region");
+                map.put("message", "liste SIGNL");
+                map.put("status", "200");
+                map.put("data",listSignals);
+                return new ResponseEntity<>(map,HttpStatus.OK);
+            } catch (Exception e) {
+                map.put("status", "400");
+                map.put("message", e.getMessage());
+                return new ResponseEntity<>(map,HttpStatus.OK);
+            }
+    }
+    
+    @GetMapping("typeSignal/statistiques")
+    public ResponseEntity<Map<String,Object>> statTypeSignal (HttpServletRequest request,@RequestHeader(name = "Authorization") String authHeader) {
+            Map<String,Object> map = new HashMap<>();
+            try {
+                verifierTokenAdmin(authHeader, request);
+                System.out.println("MANDE NY ITOOOOOOO"+request.getAttribute("idAdmin"));
+                List<StatStatus>  listSignals = serv.getStatStatus("type");
+                map.put("message", "liste SIGNL");
+                map.put("status", "200");
+                map.put("data",listSignals);
+                return new ResponseEntity<>(map,HttpStatus.OK);
+            } catch (Exception e) {
+                map.put("status", "400");
+                map.put("message", e.getMessage());
+                return new ResponseEntity<>(map,HttpStatus.OK);
+            }
+    }
+    
+    
+    
     
     @GetMapping("/signals")
     public ResponseEntity<Map<String,Object>> signals (HttpServletRequest request,@RequestHeader(name = "Authorization") String authHeader) {
@@ -145,7 +147,7 @@ public class BackController {
     }   
         
     @PutMapping("/signal/{idSignal}")
-    public ResponseEntity<Map<String,String>> updateOffreById(HttpServletRequest request,@PathVariable("idSignal") String idSignal,@RequestBody Map<String, Object> signalMap,@RequestHeader(name = "Authorization") String authHeader) throws Exception{
+    public ResponseEntity<Map<String,String>> updateSignal(HttpServletRequest request,@PathVariable("idSignal") String idSignal,@RequestBody Map<String, Object> signalMap,@RequestHeader(name = "Authorization") String authHeader) throws Exception{
             Map<String,String> map = new HashMap<>();
             String lastStatus = signalMap.get("lastStatus").toString();
             try{
@@ -207,7 +209,7 @@ public class BackController {
     }
     
     @PostMapping("/affecter")
-    public ResponseEntity<Map<String,Object>> createOffre(HttpServletRequest request,@RequestBody Map<String, Object> signalMap,@RequestHeader(name = "Authorization") String authHeader) throws Exception {
+    public ResponseEntity<Map<String,Object>> affecter(HttpServletRequest request,@RequestBody Map<String, Object> signalMap,@RequestHeader(name = "Authorization") String authHeader) throws Exception {
             Map<String,Object> map = new HashMap<>();
             int idSignal = (Integer)signalMap.get("idSignal");
             String status =signalMap.get("status").toString();
@@ -223,7 +225,7 @@ public class BackController {
                 return new ResponseEntity<>(map, HttpStatus.CONFLICT);
             }
     }
-   
+    
     
     
     

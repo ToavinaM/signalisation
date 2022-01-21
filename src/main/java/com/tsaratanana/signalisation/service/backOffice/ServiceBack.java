@@ -27,12 +27,12 @@ public interface ServiceBack {
     
     
     
+    
+    
     Integer affectation(int idSignal, int valide) throws Exception ;
-    JSONObject readJsonFromUrl(String url) throws IOException, JSONException ;
-    String readAll(Reader rd) throws IOException;
     int getIdTegion (int idSignal);
     String imageEncoderDecoder( String imgPath)throws IOException;
     Integer historique (int idSignal, String status) throws Exception;
-    List<StatStatus> getStatStatus()throws Exception;
-       
+    List<StatStatus> getStatStatus(String key)throws Exception;
+          
 }

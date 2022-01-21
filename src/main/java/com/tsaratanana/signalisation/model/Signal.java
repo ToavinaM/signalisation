@@ -15,6 +15,7 @@ public class Signal {
 
    int idSignal;
    int idtypeSignal;
+   int idUtilisateur;
    int idRegion;
    String nomSignal;
    String nomRegion;       
@@ -28,9 +29,10 @@ public class Signal {
    Timestamp lastUpdate;
    String lastStatus;
 
-    public Signal(int idSignal, int idtypeSignal, int idRegion, String nomSignal, String nomRegion, String description, String photo, Timestamp dateSignal, Double lat, Double lng, String subUrb, String province, Timestamp lastUpdate, String lastStatus) {
+    public Signal(int idSignal, int idtypeSignal, int idUtilisateur, int idRegion, String nomSignal, String nomRegion, String description, String photo, Timestamp dateSignal, Double lat, Double lng, String subUrb, String province, Timestamp lastUpdate, String lastStatus) {
         this.idSignal = idSignal;
         this.idtypeSignal = idtypeSignal;
+        this.idUtilisateur = idUtilisateur;
         this.idRegion = idRegion;
         this.nomSignal = nomSignal;
         this.nomRegion = nomRegion;
@@ -45,6 +47,15 @@ public class Signal {
         this.lastStatus = lastStatus;
     }
 
+    public int getIdUtilisateur() {
+        return idUtilisateur;
+    }
+
+    public void setIdUtilisateur(int idUtilisateur) {
+        this.idUtilisateur = idUtilisateur;
+    }
+
+   
     public int getIdSignal() {
         return idSignal;
     }

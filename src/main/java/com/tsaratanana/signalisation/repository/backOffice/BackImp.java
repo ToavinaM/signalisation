@@ -44,7 +44,7 @@ public class BackImp implements RepositoryBack {
         try {
             System.err.println(rs);
             
-            return new Signal(rs.getInt("idSignal"),rs.getInt("idtypeSignal"),rs.getInt("idRegion"),rs.getString("nomSignal"),rs.getString("nomRegion"),rs.getString("description"),rs.getString("photo"),rs.getTimestamp("dateSignal"),rs.getDouble("lat"),rs.getDouble("lng"),rs.getString("subUrb"),rs.getString("province"),rs.getTimestamp("lastUpdate"),rs.getString("lastStatus"));
+            return new Signal(rs.getInt("idSignal"),rs.getInt("idtypeSignal"),rs.getInt("idUtilisateur"),rs.getInt("idRegion"),rs.getString("nomSignal"),rs.getString("nomRegion"),rs.getString("description"),rs.getString("photo"),rs.getTimestamp("dateSignal"),rs.getDouble("lat"),rs.getDouble("lng"),rs.getString("subUrb"),rs.getString("province"),rs.getTimestamp("lastUpdate"),rs.getString("lastStatus"));
         } catch (SQLException e) {
             return null;
         }    
@@ -76,7 +76,7 @@ public class BackImp implements RepositoryBack {
     
     @Override
     public List<Signal> signals() throws Exception {
-       String sign = " select  s.*, t.nom nomSignal, r.nom nomRegion from signal s inner join  typeSignal  t on s.idtypesignal=t.idtypesignal inner join region r on s.idRegion=r.idRegion left join historique h on s.idSignal=h.idSignal where h.idSignal is null;";
+       String sign = "select  s.*, t.nom nomSignal, r.nom nomRegion from signal s inner join  typeSignal  t on s.idtypesignal=t.idtypesignal inner join region r on s.idRegion=r.idRegion where s.lastStatus = 'en attente'";
 //       String sign = " select  s.*, t.nom nomSignal, r.nom nomRegion from signal s inner join  typeSignal  t on s.idtypesignal=t.idtypesignal inner join region r on s.idRegion=r.idRegion left join historique h on s.idSignal=h.idSignal;";
        return jdbc.query(sign,rowMapperSignal);
     }
@@ -137,9 +137,15 @@ public class BackImp implements RepositoryBack {
     }
 
     @Override
-    public List<StatStatus> getStatStatus() throws Exception {
-        String requet = " select  count (idSignal) countSignal, lastStatus from signal group by lastStatus";
-       return jdbc.query(requet, rowMapperStatStatus);
+    public List<StatStatus> getStatStatus(String key) throws Exception {
+        String requet="";
+        if (key.equals("status"))
+            requet = " select  count (idSignal) countSignal, lastStatus from signal group by lastStatus";
+        if (key.equals("region"))
+            requet="select  count (s.idSignal) countSignal, t.nom as lastStatus from signal s inner join region t on t.idRegion=s.idRegion  group by t.nom";
+        if (key.equals("type"))
+            requet="select  count (s.idSignal) countSignal, t.nom as lastStatus from signal s inner join typeSignal t on t.idTypeSignal=s.idTypeSignal  group by t.nom";
+        return jdbc.query(requet, rowMapperStatStatus);
     }
 
    

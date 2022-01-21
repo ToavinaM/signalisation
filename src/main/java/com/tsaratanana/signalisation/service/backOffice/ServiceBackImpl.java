@@ -54,25 +54,6 @@ public class ServiceBackImpl implements ServiceBack{
         return rep.affectation(idSignal,valide);
     }
 
-    @Override
-    public JSONObject readJsonFromUrl(String url) throws IOException, JSONException {
-    try (InputStream is = new URL(url).openStream()) {
-      BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
-      String jsonText = readAll(rd);
-      JSONObject json = new JSONObject(jsonText);
-      return json;
-    }
-    }
-
-    @Override
-    public String readAll(Reader rd) throws IOException {
-        StringBuilder sb = new StringBuilder();
-        int cp;
-        while ((cp = rd.read()) != -1) {
-          sb.append((char) cp);
-        }
-        return sb.toString();
-    }
 
     @Override
     public int getIdTegion(int idSignal) {
@@ -118,10 +99,11 @@ public class ServiceBackImpl implements ServiceBack{
     }
 
     @Override
-    public List<StatStatus> getStatStatus() throws Exception {
-       return rep.getStatStatus();
+    public List<StatStatus> getStatStatus(String key) throws Exception {
+       return rep.getStatStatus(key);
     }
 
+    
    
     
    

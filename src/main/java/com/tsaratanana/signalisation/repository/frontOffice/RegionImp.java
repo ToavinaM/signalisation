@@ -8,6 +8,7 @@ package com.tsaratanana.signalisation.repository.frontOffice;
 import com.tsaratanana.signalisation.model.Admin;
 import com.tsaratanana.signalisation.model.Region;
 import com.tsaratanana.signalisation.model.Signal;
+import java.sql.SQLException;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -57,10 +58,22 @@ public class RegionImp implements RepositoryRegion{
      
           
     });
+     private RowMapper<Signal> rowMapperSignal = ((rs,rowNum)->{
+        try {
+            System.err.println(rs);
+            
+            return new Signal(rs.getInt("idSignal"),rs.getInt("idtypeSignal"),rs.getInt("idUtilisateur"),rs.getInt("idRegion"),rs.getString("nomSignal"),rs.getString("nomRegion"),rs.getString("description"),rs.getString("photo"),rs.getTimestamp("dateSignal"),rs.getDouble("lat"),rs.getDouble("lng"),rs.getString("subUrb"),rs.getString("province"),rs.getTimestamp("lastUpdate"),rs.getString("lastStatus"));
+        } catch (SQLException e) {
+            return null;
+        }    
+    });
+    
 
     @Override
-    public List<Signal> signalRegions() throws Exception {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public List<Signal> signalRegions(String idRegion) throws Exception {
+     String sign = "select  s.*, t.nom nomSignal, r.nom nomRegion from signal s inner join  typeSignal  t on s.idtypesignal=t.idtypesignal inner join region r on s.idRegion=r.idRegion where s.idRegion="+idRegion+"and s.lastStatus = 'en attente'";
+//       String sign = " select  s.*, t.nom nomSignal, r.nom nomRegion from signal s inner join  typeSignal  t on s.idtypesignal=t.idtypesignal inner join region r on s.idRegion=r.idRegion left join historique h on s.idSignal=h.idSignal;";
+       return jdbc.query(sign,rowMapperSignal);
     }
     
 }

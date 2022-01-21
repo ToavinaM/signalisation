@@ -22,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 public interface ServiceRegion {
 
     Region login(String login, String mdp)throws Exception;
-    List<Signal> signalRegions()throws Exception; 
+    List<Signal> signalRegions(String idRegion)throws Exception; 
     
     
 }
