@@ -1,6 +1,5 @@
 
 package com.tsaratanana.signalisation.controller;
-import static com.mongodb.assertions.Assertions.assertTrue;
 import com.tsaratanana.signalisation.service.backOffice.ServiceBack;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -21,7 +20,6 @@ import com.tsaratanana.signalisation.model.Admin;
 import com.tsaratanana.signalisation.model.Signal;
 import com.tsaratanana.signalisation.model.StatStatus;
 import java.io.FileOutputStream;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import org.apache.tomcat.util.codec.binary.Base64;
@@ -60,13 +58,18 @@ public class BackController {
     {
          String path = "image";
         File fileS = new File(path);
-        String absolutePath = fileS.getAbsolutePath();
+         String fileName =multipartFile.getOriginalFilename();
+        String absolutePath = fileS.getAbsolutePath()+"\\"+fileName;
+       Path pathdd = Paths.get(absolutePath);
         System.out.println(absolutePath);
-        String fileName =multipartFile.getOriginalFilename();
-         multipartFile.transferTo(new File(absolutePath+"\\"+fileName));       
-        File file =  new File(absolutePath+"\\"+fileName);
+        System.out.println(pathdd);
+      
+       multipartFile.transferTo(new File(absolutePath));       
+        File file = new File(absolutePath); 
         FileInputStream fileInputStreamReader = new FileInputStream(file);
         byte[] bytes = new byte[(int)file.length()];
+       
+        fileInputStreamReader.read(bytes);
         return "data:image/jpeg;base64,"+new String(Base64.encodeBase64(bytes), "UTF-8");
     }
     
