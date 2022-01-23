@@ -72,7 +72,7 @@ public class UserImp implements RepositoryUser {
     
     @Override
     public List<Signal> signals() throws Exception {
-       String sign = "select  s.*, t.nom nomSignal, r.nom nomRegion from signal s inner join  typeSignal  t on s.idtypesignal=t.idtypesignal inner join region r on s.idRegion=r.idRegion s.lastStatus = 'en attente'";
+       String sign = "select  s.*, t.nom nomSignal, r.nom nomRegion from signal s inner join  typeSignal  t on s.idtypesignal=t.idtypesignal inner join region r on s.idRegion=r.idRegion where s.lastStatus = 'en attente'";
 //       String sign = " select  s.*, t.nom nomSignal, r.nom nomRegion from signal s inner join  typeSignal  t on s.idtypesignal=t.idtypesignal inner join region r on s.idRegion=r.idRegion left join historique h on s.idSignal=h.idSignal;";
        return jdbc.query(sign,rowMapperSignal);
     }

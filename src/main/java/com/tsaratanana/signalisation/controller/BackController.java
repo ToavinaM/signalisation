@@ -1,5 +1,6 @@
 
 package com.tsaratanana.signalisation.controller;
+import static com.mongodb.assertions.Assertions.assertTrue;
 import com.tsaratanana.signalisation.service.backOffice.ServiceBack;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -19,11 +20,16 @@ import javax.servlet.http.HttpServletRequest;
 import com.tsaratanana.signalisation.model.Admin;
 import com.tsaratanana.signalisation.model.Signal;
 import com.tsaratanana.signalisation.model.StatStatus;
+import java.io.FileOutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,7 +38,11 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  *
@@ -44,14 +54,19 @@ import org.springframework.web.bind.annotation.RestController;
 public class BackController {
     @Autowired
     ServiceBack serv;
+   
     @GetMapping("/base64")
-    public String imageEncoderDecoder(String imgPath) throws IOException
+    public String imageEncoderDecoder(MultipartFile multipartFile) throws IOException
     {
-       //// return serv.imageEncoderDecoder(imgPath);
-        File file =  new File(imgPath);
+         String path = "image";
+        File fileS = new File(path);
+        String absolutePath = fileS.getAbsolutePath();
+        System.out.println(absolutePath);
+        String fileName =multipartFile.getOriginalFilename();
+         multipartFile.transferTo(new File(absolutePath+"\\"+fileName));       
+        File file =  new File(absolutePath+"\\"+fileName);
         FileInputStream fileInputStreamReader = new FileInputStream(file);
         byte[] bytes = new byte[(int)file.length()];
-        fileInputStreamReader.read(bytes);
         return "data:image/jpeg;base64,"+new String(Base64.encodeBase64(bytes), "UTF-8");
     }
     

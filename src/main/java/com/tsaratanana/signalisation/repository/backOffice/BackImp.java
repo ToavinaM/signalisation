@@ -66,11 +66,11 @@ public class BackImp implements RepositoryBack {
             Admin admin = jdbc.queryForObject(toLog, new Object[] {login,mdp},rowMapperAdmin);
             System.out.println("idddddddddd"+admin);
             if(admin==null) {
-               throw new Exception("Invalid password/mail");
+               throw new Exception("Invalid password or email");
             }
             return admin;
         } catch (Exception e) {
-            throw new Exception("Invalid password/mail");
+            throw new Exception("Invalid password or email");
         }     
     }
     
