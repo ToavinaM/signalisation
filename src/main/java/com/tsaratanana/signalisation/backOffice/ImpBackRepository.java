@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.tsaratanana.signalisation.repository.backOffice;
+package com.tsaratanana.signalisation.backOffice;
 
+import com.tsaratanana.signalisation.backOffice.RepositoryBack;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -27,7 +28,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
  */
 @Repository
 @CrossOrigin
-public class BackImp implements RepositoryBack {
+public class ImpBackRepository implements RepositoryBack {
     @Autowired
     JdbcTemplate jdbc;
     
@@ -76,7 +77,7 @@ public class BackImp implements RepositoryBack {
     
     @Override
     public List<Signal> signals() throws Exception {
-       String sign = "select  s.*, t.nom nomSignal, r.nom nomRegion from signal s inner join  typeSignal  t on s.idtypesignal=t.idtypesignal inner join region r on s.idRegion=r.idRegion where s.lastStatus = 'en attente'";
+       String sign = "select  s.*, t.nom nomSignal, r.nom nomRegion from signal s inner join  typeSignal  t on s.idtypesignal=t.idtypesignal inner join region r on s.idRegion=r.idRegion where s.lastStatus = 'En attente'";
 //       String sign = " select  s.*, t.nom nomSignal, r.nom nomRegion from signal s inner join  typeSignal  t on s.idtypesignal=t.idtypesignal inner join region r on s.idRegion=r.idRegion left join historique h on s.idSignal=h.idSignal;";
        return jdbc.query(sign,rowMapperSignal);
     }
@@ -145,6 +146,8 @@ public class BackImp implements RepositoryBack {
             requet="select  count (s.idSignal) countSignal, t.nom as lastStatus from signal s inner join region t on t.idRegion=s.idRegion  group by t.nom";
         if (key.equals("type"))
             requet="select  count (s.idSignal) countSignal, t.nom as lastStatus from signal s inner join typeSignal t on t.idTypeSignal=s.idTypeSignal  group by t.nom";
+        if (key.equals("date"))
+             requet=" select  count (idSignal) countSignal, DATE(dateSignal) as lastStatus from signal group by DATE(dateSignal) limit 3";
         return jdbc.query(requet, rowMapperStatStatus);
     }
 

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.tsaratanana.signalisation.repository.frontOffice;
+package com.tsaratanana.signalisation.frontOffice;
 
 import com.tsaratanana.signalisation.model.Admin;
 import com.tsaratanana.signalisation.model.Region;
@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
  */
 @Repository
 @CrossOrigin
-public class RegionImp implements RepositoryRegion{
+public class ImpFrontRepository implements RepositoryRegion{
 
     @Autowired
     JdbcTemplate jdbc;
@@ -71,7 +71,7 @@ public class RegionImp implements RepositoryRegion{
 
     @Override
     public List<Signal> signalRegions(String idRegion) throws Exception {
-     String sign = "select  s.*, t.nom nomSignal, r.nom nomRegion from signal s inner join  typeSignal  t on s.idtypesignal=t.idtypesignal inner join region r on s.idRegion=r.idRegion where s.idRegion="+idRegion+"and s.lastStatus = 'en attente'";
+     String sign = "select  s.*, t.nom nomSignal, r.nom nomRegion from signal s inner join  typeSignal  t on s.idtypesignal=t.idtypesignal inner join region r on s.idRegion=r.idRegion where s.idRegion="+idRegion+"and s.lastStatus != 'En attente'";
 //       String sign = " select  s.*, t.nom nomSignal, r.nom nomRegion from signal s inner join  typeSignal  t on s.idtypesignal=t.idtypesignal inner join region r on s.idRegion=r.idRegion left join historique h on s.idSignal=h.idSignal;";
        return jdbc.query(sign,rowMapperSignal);
     }

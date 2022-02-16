@@ -1,5 +1,5 @@
 
-package com.tsaratanana.signalisation.repository.frontOffice;
+package com.tsaratanana.signalisation.frontOffice;
 
 import java.util.List;
 import com.tsaratanana.signalisation.model.Region;

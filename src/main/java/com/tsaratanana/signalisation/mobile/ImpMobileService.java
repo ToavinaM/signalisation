@@ -3,12 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.tsaratanana.signalisation.service.mobile;
+package com.tsaratanana.signalisation.mobile;
+import com.tsaratanana.signalisation.model.Region;
 import com.tsaratanana.signalisation.model.Signal;
 import com.tsaratanana.signalisation.model.Utilisateur;
-import com.tsaratanana.signalisation.repository.backOffice.RepositoryBack;
-import com.tsaratanana.signalisation.repository.user.RepositoryUser;
-import com.tsaratanana.signalisation.service.backOffice.ServiceBackImpl;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,9 +28,9 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 @Transactional
-public class ServiceUserImp implements ServiceUser{    
+public class ImpMobileService implements ServiceMobile{    
     @Autowired
-   RepositoryUser rep; 
+   RepositoryMobile rep; 
  
     @Override
     public Utilisateur login(String login, String mdp) throws Exception {
@@ -88,5 +86,16 @@ public class ServiceUserImp implements ServiceUser{
     @Override
     public  Integer addsignal  (int idUtilisateur,int idtypeSignal,String description,String photo,Double lat,Double lng,int idRegion,String subUrb,String province ) throws Exception {
         return rep.addsignal(idUtilisateur, idtypeSignal, description, photo, lat, lng,idRegion,subUrb,province);
+    }
+
+    @Override
+    public Integer inscription(String login, String nom, String mdp) throws Exception {
+        return rep.inscription(login, nom, mdp);
+       
+    }
+
+    @Override
+    public List<Region> findBynameRegion(String nom) throws Exception {
+       return rep.findBynameRegion(nom);
     }
 }

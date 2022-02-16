@@ -1,6 +1,5 @@
-
-package com.tsaratanana.signalisation.controller;
-import com.tsaratanana.signalisation.service.backOffice.ServiceBack;
+package com.tsaratanana.signalisation.backOffice;
+import com.tsaratanana.signalisation.backOffice.ServiceBack;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -142,6 +141,26 @@ public class BackController {
                 return new ResponseEntity<>(map,HttpStatus.OK);
             }
     }
+    
+     
+    @GetMapping("dateSignal/statistiques")
+    public ResponseEntity<Map<String,Object>> statDate (HttpServletRequest request,@RequestHeader(name = "Authorization") String authHeader) {
+            Map<String,Object> map = new HashMap<>();
+            try {
+                verifierTokenAdmin(authHeader, request);
+                System.out.println("MANDE NY ITOOOOOOO"+request.getAttribute("idAdmin"));
+                List<StatStatus>  listSignals = serv.getStatStatus("date");
+                map.put("message", "liste SIGNL");
+                map.put("status", "200");
+                map.put("data",listSignals);
+                return new ResponseEntity<>(map,HttpStatus.OK);
+            } catch (Exception e) {
+                map.put("status", "400");
+                map.put("message", e.getMessage());
+                return new ResponseEntity<>(map,HttpStatus.OK);
+            }
+    }
+    
     
     
     

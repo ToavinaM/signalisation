@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.tsaratanana.signalisation.service.backOffice;
+package com.tsaratanana.signalisation.backOffice;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -24,15 +24,11 @@ public interface ServiceBack {
     Admin login(String login, String mdp)throws Exception;
     List<Signal> signals()throws Exception;
     Integer updateSignal(int idSignal, String lastStatus) throws Exception;
-    
-    
-    
-    
-    
     Integer affectation(int idSignal, int valide) throws Exception ;
     int getIdTegion (int idSignal);
     String imageEncoderDecoder( String imgPath)throws IOException;
     Integer historique (int idSignal, String status) throws Exception;
     List<StatStatus> getStatStatus(String key)throws Exception;
+   
           
 }

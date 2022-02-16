@@ -3,18 +3,16 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.tsaratanana.signalisation.repository.user;
+package com.tsaratanana.signalisation.mobile;
 
-import com.tsaratanana.signalisation.repository.backOffice.*;
+import com.tsaratanana.signalisation.model.Region;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
-import com.tsaratanana.signalisation.model.Admin;
 import com.tsaratanana.signalisation.model.Signal;
-import com.tsaratanana.signalisation.model.StatStatus;
 import com.tsaratanana.signalisation.model.Utilisateur;
-import java.sql.Timestamp;
+import org.apache.commons.validator.EmailValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -30,7 +28,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
  */
 @Repository
 @CrossOrigin
-public class UserImp implements RepositoryUser {
+public class ImpMobileRepository implements RepositoryMobile {
     @Autowired
     JdbcTemplate jdbc;
     
@@ -38,6 +36,16 @@ public class UserImp implements RepositoryUser {
         try {
             System.err.println(rs);
             return new Utilisateur (rs.getInt("idUtilisateur"),rs.getString("login"),rs.getString("nom"),rs.getString("mdp"));
+        } catch (Exception e) {
+            return null;
+        }
+    });
+  
+    
+    private RowMapper<Region>  rowMapperRegion  = ((rs,rowNum)->{
+        try {
+            System.err.println(rs);
+            return new Region (rs.getInt("idRegion"),rs.getString("login"),rs.getString("nom"),rs.getString("mdp"));
         } catch (Exception e) {
             return null;
         }
@@ -115,10 +123,37 @@ public class UserImp implements RepositoryUser {
                         ps.setString(9, province);
                         return ps;
                 },keyHoslder);
-                return (Integer) keyHoslder.getKeys().get("idTraitement");
+                return (Integer) keyHoslder.getKeys().get("idSignal");
         } catch (DataAccessException e) {
                 throw new Exception("Invalid request");
         }  
+        
+    }
+
+    @Override
+    public Integer inscription(String login, String nom, String mdp) throws Exception {
+        String req = "insert into utilisateur (login,nom,mdp) values(?,?,?)";
+      System.err.println("INSERTION SIGNAL");
+        try {
+                KeyHolder keyHoslder = new GeneratedKeyHolder();
+                jdbc.update(connection -> {
+                        PreparedStatement ps =  connection.prepareStatement(req,Statement.RETURN_GENERATED_KEYS);
+                        ps.setString(1, login);
+                        ps.setString(2, nom);
+                        ps.setString(3, mdp);
+                        return ps;
+                },keyHoslder);
+                return (Integer) keyHoslder.getKeys().get("idUtilisateur");
+        } catch (DataAccessException e) {
+                throw new Exception("Invalid request");
+        }  
+    }
+
+    @Override
+    public List<Region> findBynameRegion(String nom) throws Exception {
+        String req= "select * From Region where nom='"+nom+"'";
+        System.out.println(req);
+        return jdbc.query(req,rowMapperRegion);
         
     }
     

@@ -3,12 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.tsaratanana.signalisation.service.frontOffice;
+package com.tsaratanana.signalisation.frontOffice;
 
 import com.tsaratanana.signalisation.model.Region;
 import com.tsaratanana.signalisation.model.Signal;
-import com.tsaratanana.signalisation.repository.backOffice.RepositoryBack;
-import com.tsaratanana.signalisation.repository.frontOffice.RepositoryRegion;
+import com.tsaratanana.signalisation.backOffice.RepositoryBack;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 @Transactional
-public class ServiceRegionImp implements ServiceRegion{    
+public class ImpFrontService implements ServiceRegion{    
     @Autowired
     RepositoryRegion rep;
 
