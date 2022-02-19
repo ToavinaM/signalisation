@@ -1,8 +1,7 @@
 
 package com.tsaratanana.signalisation.mobile;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tsaratanana.signalisation.model.Region;
-import com.tsaratanana.signalisation.model.Signalement;
+import com.tsaratanana.signalisation.model.Signal;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -11,8 +10,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.SignatureException;
 import io.jsonwebtoken.UnsupportedJwtException;
 import java.io.IOException;
-//import java.sql.Date;
-import java.util.Date;
+import java.sql.Date;
 import java.util.HashMap;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
@@ -32,7 +30,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -47,37 +44,6 @@ public class MobileController {
     @Autowired
     ServiceMobile serv;
     
-    @Autowired
-    private SignalRepository repository1;
-   
-     @PostMapping("/newsignal")
-  ResponseEntity<Map<String,Object>> newSignal(HttpServletRequest request, String authHeader,@RequestParam MultipartFile multipartImage,@RequestParam String newSignal) throws Exception {
-    Map<String,Object> map = new HashMap<>();
-    Signalement nouv = new Signalement();
-    
-      try{
-      
-        ObjectMapper objm=new ObjectMapper();
-        
-        nouv = objm.readValue(newSignal, Signalement.class);
-        
-        nouv.setIdpersonne(1);
-        nouv.setDateheure(new Date());
-        System.out.println("dsssssssssssssssssssssssssssssssssssssssssssss");
-        nouv.setImage(multipartImage.getBytes());
-        System.out.println(multipartImage.getBytes());
-        Signalement liste= repository1.save(nouv);
-        map.put("message", "liste SIGNL");
-                    map.put("status", "200");
-                    map.put("data",liste);
-                    return new ResponseEntity<>(map,HttpStatus.OK);
-    }
-    catch(Exception exce){
-      map.put("status", "400");
-          map.put("message", exce);
-          return new ResponseEntity<>(map,HttpStatus.OK);
-    }
-  }
    
     @PostMapping("/user")
     public ResponseEntity<Map<String,String>> huhu(@RequestBody Map<Object,Object> adminMap)throws Exception{
@@ -112,8 +78,7 @@ public class MobileController {
     }
     
     
-  
-  
+    
     @GetMapping("/liens")
     public Map<String,Object> liens (String lat,String lon) {
         JSONObject v=serv.liens(lat,lon);
