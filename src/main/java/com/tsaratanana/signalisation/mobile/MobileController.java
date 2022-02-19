@@ -209,11 +209,11 @@ public class MobileController {
     
     
     @PostMapping("inscription/user")
-    public ResponseEntity<Map<String,String>> addSignl(HttpServletRequest request,@RequestBody Map<Object, Object> signalMap) throws Exception{
+    public ResponseEntity<Map<String,String>> addSignl(@RequestBody Map<Object, Object> signalMap) throws Exception{
             Map<String,String> map = new HashMap<>();
-            String login=signalMap.get("login");
-            String nom=signalMap.get("nom"); 
-            String mdp=signalMap.get("mdp");
+            String login=signalMap.get("login").toString();
+            String nom=signalMap.get("nom").toString(); 
+            String mdp=signalMap.get("mdp").toString();
             boolean valid = EmailValidator.getInstance().isValid(login);
            
             try{
