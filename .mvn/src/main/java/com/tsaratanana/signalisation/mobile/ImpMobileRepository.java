@@ -12,7 +12,7 @@ import java.sql.Statement;
 import java.util.List;
 import com.tsaratanana.signalisation.model.Signal;
 import com.tsaratanana.signalisation.model.Utilisateur;
-import org.apache.commons.validator.EmailValidator;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
