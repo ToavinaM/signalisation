@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package com.tsaratanana.signalisation.model;
+import java.util.logging.Logger;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 /**
@@ -15,6 +16,28 @@ public class TypeSignal {
     
    int idTypeSignal;
    String nom;
+
+    public TypeSignal(int idTypeSignal, String nom) {
+        this.idTypeSignal = idTypeSignal;
+        this.nom = nom;
+    }
+
+    public int getIdTypeSignal() {
+        return idTypeSignal;
+    }
+
+    public void setIdTypeSignal(int idTypeSignal) {
+        this.idTypeSignal = idTypeSignal;
+    }
+
+    public String getNom() {
+        return nom;
+    }
+
+    public void setNom(String nom) {
+        this.nom = nom;
+    }
+ 
    
     
 }

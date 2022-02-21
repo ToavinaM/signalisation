@@ -11,6 +11,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
 import com.tsaratanana.signalisation.model.Signal;
+import com.tsaratanana.signalisation.model.TypeSignal;
 import com.tsaratanana.signalisation.model.Utilisateur;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +47,16 @@ public class ImpMobileRepository implements RepositoryMobile {
         try {
             System.err.println(rs);
             return new Region (rs.getInt("idRegion"),rs.getString("login"),rs.getString("nom"),rs.getString("mdp"));
+        } catch (Exception e) {
+            return null;
+        }
+    });
+    
+    
+     private RowMapper<TypeSignal>  rowMapperTypeSignal  = ((rs,rowNum)->{
+        try {
+            System.err.println(rs);
+            return new TypeSignal (rs.getInt("idTypeSignal"),rs.getString("nom"));
         } catch (Exception e) {
             return null;
         }
@@ -155,6 +166,20 @@ public class ImpMobileRepository implements RepositoryMobile {
         System.out.println(req);
         return jdbc.query(req,rowMapperRegion);
         
+    }
+
+    @Override
+    public List<Region> findRegion() throws Exception {
+        String req= "select * From Region";
+        System.out.println(req);
+        return jdbc.query(req,rowMapperRegion);
+    }
+
+    @Override
+    public List<TypeSignal> findTypeSignal() throws Exception {
+         String req= "select * From typeSignal";
+        System.out.println(req);
+        return jdbc.query(req,rowMapperTypeSignal);
     }
     
     

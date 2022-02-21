@@ -8,6 +8,7 @@ package com.tsaratanana.signalisation.mobile;
 
 import com.tsaratanana.signalisation.model.Region;
 import com.tsaratanana.signalisation.model.Signal;
+import com.tsaratanana.signalisation.model.TypeSignal;
 import com.tsaratanana.signalisation.model.Utilisateur;
 import java.io.IOException;
 import java.io.Reader;
@@ -32,6 +33,8 @@ public interface ServiceMobile {
     String readAll(Reader rd) throws IOException;
     JSONObject  liens (String lat,String lon);
     List<Region> findBynameRegion(String nom) throws Exception;
-    
+    List<Region> findRegion() throws Exception ;
+    List <TypeSignal> findTypeSignal() throws Exception;
+   
     
 }

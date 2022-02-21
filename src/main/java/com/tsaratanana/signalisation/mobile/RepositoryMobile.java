@@ -7,6 +7,7 @@ package com.tsaratanana.signalisation.mobile;
 
 import com.tsaratanana.signalisation.model.Region;
 import com.tsaratanana.signalisation.model.Signal;
+import com.tsaratanana.signalisation.model.TypeSignal;
 import com.tsaratanana.signalisation.model.Utilisateur;
 import java.util.List;
 
@@ -22,4 +23,6 @@ public interface RepositoryMobile {
   Integer addsignal  (int idUtilisateur,int idtypeSignal,String description,String photo,Double lat,Double lng,int idRegion,String subUrb,String province ) throws Exception ;
   Integer inscription (String login, String nom, String mdp)throws Exception ;
   List<Region> findBynameRegion (String nom)throws Exception ;
+  List <Region> findRegion() throws Exception;
+  List <TypeSignal> findTypeSignal() throws Exception;
 }

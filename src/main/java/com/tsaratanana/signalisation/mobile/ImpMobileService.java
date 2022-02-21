@@ -6,6 +6,7 @@
 package com.tsaratanana.signalisation.mobile;
 import com.tsaratanana.signalisation.model.Region;
 import com.tsaratanana.signalisation.model.Signal;
+import com.tsaratanana.signalisation.model.TypeSignal;
 import com.tsaratanana.signalisation.model.Utilisateur;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -97,5 +98,15 @@ public class ImpMobileService implements ServiceMobile{
     @Override
     public List<Region> findBynameRegion(String nom) throws Exception {
        return rep.findBynameRegion(nom);
+    }
+
+    @Override
+    public List<Region> findRegion() throws Exception {
+        return rep.findRegion();
+    }
+
+    @Override
+    public List<TypeSignal> findTypeSignal() throws Exception {
+          return rep.findTypeSignal();
     }
 }

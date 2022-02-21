@@ -1,8 +1,11 @@
 
 package com.tsaratanana.signalisation.mobile;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import static com.tsaratanana.signalisation.frontOffice.FrontController.verifierTokenAdmin;
 import com.tsaratanana.signalisation.model.Region;
+import com.tsaratanana.signalisation.model.Signal;
 import com.tsaratanana.signalisation.model.Signalement;
+import com.tsaratanana.signalisation.model.TypeSignal;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -19,8 +22,9 @@ import javax.servlet.http.HttpServletRequest;
 import com.tsaratanana.signalisation.model.Utilisateur;
 import java.io.File;
 import java.io.FileInputStream;
+import java.sql.Blob;
 import java.util.List;
-import org.apache.commons.validator.EmailValidator;
+import javax.sql.rowset.serial.SerialBlob;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,39 +50,67 @@ import org.springframework.web.multipart.MultipartFile;
 public class MobileController {
     @Autowired
     ServiceMobile serv;
-    
-    @Autowired
-    private SignalRepository repository1;
    
-     @PostMapping("/newsignal")
-  ResponseEntity<Map<String,Object>> newSignal(HttpServletRequest request, String authHeader,@RequestParam MultipartFile multipartImage,@RequestParam String newSignal) throws Exception {
-    Map<String,Object> map = new HashMap<>();
-    Signalement nouv = new Signalement();
+   
+//      @PostMapping("/newsignal")
+//   ResponseEntity<Map<String,Object>> newSignal(HttpServletRequest request, String authHeader,@RequestParam MultipartFile multipartImage,@RequestParam String newSignal) throws Exception {
+//     Map<String,Object> map = new HashMap<>();
+//     Signalement nouv = new Signalement();
     
-      try{
+//       try{
       
-        ObjectMapper objm=new ObjectMapper();
+//         ObjectMapper objm=new ObjectMapper();
         
-        nouv = objm.readValue(newSignal, Signalement.class);
+//         nouv = objm.readValue(newSignal, Signalement.class);
         
-        nouv.setIdpersonne(1);
-        nouv.setDateheure(new Date());
-        System.out.println("dsssssssssssssssssssssssssssssssssssssssssssss");
-        nouv.setImage(multipartImage.getBytes());
-        System.out.println(multipartImage.getBytes());
-        Signalement liste= repository1.save(nouv);
-        map.put("message", "liste SIGNL");
+//         nouv.setIdpersonne(1);
+//         nouv.setDateheure(new Date());
+//         System.out.println("dsssssssssssssssssssssssssssssssssssssssssssss");
+//         nouv.setImage(multipartImage.getBytes());
+//         System.out.println(multipartImage.getBytes());
+//         Signalement liste= repository1.save(nouv);
+//         map.put("message", "liste SIGNL");
+//                     map.put("status", "200");
+//                     map.put("data",liste);
+//                     return new ResponseEntity<>(map,HttpStatus.OK);
+//     }
+//     catch(Exception exce){
+//       map.put("status", "400");
+//           map.put("message", exce);
+//           return new ResponseEntity<>(map,HttpStatus.OK);
+//     }
+//   }
+    @GetMapping("/regions")
+    public ResponseEntity<Map<String,Object>> regions () {
+        Map<String,Object> map = new HashMap<>();
+        try {
+            List<Region> listSignals=serv.findRegion();
+            map.put("message", "liste SIGNL");
+            map.put("status", "200");
+            map.put("data",listSignals);
+            return new ResponseEntity<>(map,HttpStatus.OK);
+        } catch (Exception e) {
+            map.put("status", "400");
+            map.put("message", e.getMessage());
+            return new ResponseEntity<>(map,HttpStatus.OK);
+        }
+    }
+        
+   @GetMapping("/typeSignals")
+	public ResponseEntity<Map<String,Object>> typeSignal () {
+		Map<String,Object> map = new HashMap<>();
+		try {
+                    List<TypeSignal> listSignals=serv.findTypeSignal();
+                    map.put("message", "liste SIGNL");
                     map.put("status", "200");
-                    map.put("data",liste);
+                    map.put("data",listSignals);
                     return new ResponseEntity<>(map,HttpStatus.OK);
-    }
-    catch(Exception exce){
-      map.put("status", "400");
-          map.put("message", exce);
-          return new ResponseEntity<>(map,HttpStatus.OK);
-    }
-  }
-   
+		} catch (Exception e) {
+                    map.put("status", "400");
+                    map.put("message", e.getMessage());
+                    return new ResponseEntity<>(map,HttpStatus.OK);
+		}
+	}
     @PostMapping("/user")
     public ResponseEntity<Map<String,String>> huhu(@RequestBody Map<Object,Object> adminMap)throws Exception{
         String log = (String) adminMap.get("login");
@@ -98,18 +130,7 @@ public class MobileController {
     
 
     
-    @GetMapping("/lien")
-    public String lien (String lat,String lon,String key) {
-        String r="";
-        try{
-            JSONObject json = serv.readJsonFromUrl("https://nominatim.openstreetmap.org/reverse?format=json&lat="+lat+"&lon="+lon+"&zoom=27");
-            r=json.getJSONObject("address").getString(key);
-            System.out.println(json.toString());
-      }
-      catch(IOException e){
-      }
-	return r;	
-    }
+  
     
     
   
@@ -122,40 +143,30 @@ public class MobileController {
     
     
     
-    public String imageEncoderDecoder(MultipartFile multipartFile) throws IOException
-    {
-        String path = "image";
-        File fileS = new File(path);
-        String fileName =multipartFile.getOriginalFilename();
-        String absolutePath = "D:\\TRINOME-EXAMEN-S6\\signalisation\\WEB\\BackOffice\\mon-app\\public\\"+fileName;
-        multipartFile.transferTo(new File(absolutePath));
-      //// File file = new File(absolutePath); 
-      // FileInputStream fileInputStreamReader = new FileInputStream(file);
-      // byte[] bytes = new byte[(int)file.length()]; 
-      // fileInputStreamReader.read(bytes);
-      // String r="data:image/jpeg;base64,"+new String(Base64.encodeBase64(bytes), "UTF-8");
-       return fileName;
-    }
-    @PostMapping("user/signal/{idUtilisateur}")
-    public ResponseEntity<Map<String,String>> addSignl(HttpServletRequest request,@PathVariable("idUtilisateur") String idUtilisateur,@RequestBody Map<String, Object> signalMap,@RequestHeader(name = "Authorization") String authHeader) throws Exception{
+    
+
+    
+    @PostMapping("user/signal1/{idUtilisateur}")
+    public ResponseEntity<Map<String,String>> ajoutsignal(@PathVariable("idUtilisateur") String idUtilisateur,@RequestBody Map<Object, Object> mety) throws Exception{
             Map<String,String> map = new HashMap<>();
-            int idtypeSignal=Integer.parseInt(signalMap.get("idtypeSignal").toString());
-            String description= signalMap.get("description").toString();
-            String photo=signalMap.get("photo").toString();
-            Double lat=Double.parseDouble(signalMap.get("lat").toString());
-            Double lng=Double.parseDouble(signalMap.get("lng").toString());
+            int idtypeSignal=Integer.parseInt(mety.get("idtypeSignal").toString());
+            String description=mety.get("description").toString();
+            String photo=mety.get("photo").toString();
+           byte[] byteData = photo.getBytes("UTF-8");//Better to specify encoding
+            Blob blob = new SerialBlob(byteData);
+           Double lat=Double.parseDouble(mety.get("lat").toString());
+           System.out.println(blob);
+               System.out.println(blob.toString());
+            Double lng=Double.parseDouble(mety.get("lng").toString());
+            int idRegion=Integer.parseInt(mety.get("region").toString());
+            String province=mety.get("province").toString();
+            String subUrb=mety.get("subUrb").toString();
             
-            String subUrb=signalMap.get("subUrb").toString();
-            String province=lien(signalMap.get("lat").toString(),signalMap.get("lng").toString(),"region");
-            String  region=lien(signalMap.get("lat").toString(),signalMap.get("lng").toString(),"state");
-            System.out.println(region);
-            Region uu=serv.findBynameRegion(region).get(0);
-            int idRegion=uu.getIdRegion();
-             System.out.println("**************"+province);
+             System.out.println("*******TAFIDITRA TAFIDITRA*******----"+lat+"----"+lng+"----"+idUtilisateur+"----"+idtypeSignal+"----"+photo+"----"+idRegion+"----"+province);
             
-            try{
-                verifierTokenAdmin(authHeader, request);
-                Integer id=serv.addsignal(Integer.parseInt(idUtilisateur), idtypeSignal, description, photo, lat, lng, idRegion, subUrb, province);
+             try{
+                
+                Integer id=serv.addsignal(Integer.parseInt(idUtilisateur), idtypeSignal, description,blob.toString(), lat, lng, idRegion, subUrb, province);
                 map.put("message", "Add successfuly");
                 map.put("idSignal",id.toString());
                 return new ResponseEntity<>(map, HttpStatus.OK);
@@ -169,43 +180,8 @@ public class MobileController {
         return new ResponseEntity<>(map, HttpStatus.NOT_FOUND);
     }	
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-     @PostMapping("user/signals/{idUtilisateur}")
-    public ResponseEntity<Map<String,String>> addSignls(@PathVariable("idUtilisateur") String idUtilisateur,int idtypeSignal,String description,MultipartFile multipartFile,Double lat,Double lng,String subUrb ) throws Exception{
-            Map<String,String> map = new HashMap<>();
-            String province=lien(lat.toString(),lng.toString(),"region");
-            String  region=lien(lat.toString(),lng.toString(),"state");
-            String photo=imageEncoderDecoder(multipartFile);
-            System.out.println(region);
-            Region uu=serv.findBynameRegion(region).get(0);
-            int idRegion=uu.getIdRegion();
-             System.out.println("**************"+province);
-            
-            try{
-                //verifierTokenAdmin(authHeader, request);
-                Integer id=serv.addsignal(Integer.parseInt(idUtilisateur), idtypeSignal, description, photo, lat, lng, idRegion, subUrb, province);
-                map.put("message", "Add successfuly");
-                map.put("idSignal",id.toString());
-                return new ResponseEntity<>(map, HttpStatus.OK);
-    } 
-    
-    catch (Exception e)
-    {
-            map.put("status", "430");
-                    map.put("message","ERROR O : "+ e.getMessage());
-        return new ResponseEntity<>(map, HttpStatus.NOT_FOUND);
-    }	
-    }
-    
-    
+     
+
     
     
     @PostMapping("inscription/user")
@@ -214,16 +190,12 @@ public class MobileController {
             String login=signalMap.get("login").toString();
             String nom=signalMap.get("nom").toString(); 
             String mdp=signalMap.get("mdp").toString();
-            boolean valid = EmailValidator.getInstance().isValid(login);
+           
            
             try{
+             
                 
-                if (!EmailValidator.getInstance().isValid(login)){
-                    map.put("message", "email non valide");
-                    throw new  Exception("email non valide");
-                }
-                
-                else if (mdp.length()<8)
+                if (mdp.length()<8)
                 {
                     map.put("message", "Votre mot de passe doit contenir au minimum 8 caractères"+mdp.length());
                     throw new  Exception("email non valide");
