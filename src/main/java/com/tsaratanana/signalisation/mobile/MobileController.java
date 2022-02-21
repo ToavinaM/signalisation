@@ -185,7 +185,7 @@ public class MobileController {
     
     
     @PostMapping("inscription/user")
-    public ResponseEntity<Map<String,String>> addSignl(HttpServletRequest request,@RequestBody Map<String, Object> signalMap) throws Exception{
+    public ResponseEntity<Map<String,String>> addSignl(@RequestBody Map<Object, Object> signalMap) throws Exception{
             Map<String,String> map = new HashMap<>();
             String login=signalMap.get("login").toString();
             String nom=signalMap.get("nom").toString(); 
