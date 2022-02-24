@@ -74,8 +74,6 @@ public class BackController {
         try {
                 Admin admin = serv.login(log, passwords);
                 map=generateJWTToken(admin);
-                map.put("profil","admin");
-                map.put("status", "200");
                 return new ResponseEntity<>(map, HttpStatus.OK);
         }catch(Exception e) {
                 map.put("message", e.getMessage());

@@ -4,7 +4,6 @@
  * and open the template in the editor.
  */
 package com.tsaratanana.signalisation.model;
-import java.util.logging.Logger;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 /**

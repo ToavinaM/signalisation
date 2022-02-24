@@ -3,8 +3,7 @@ package com.tsaratanana.signalisation.mobile;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import static com.tsaratanana.signalisation.frontOffice.FrontController.verifierTokenAdmin;
 import com.tsaratanana.signalisation.model.Region;
-import com.tsaratanana.signalisation.model.Signal;
-import com.tsaratanana.signalisation.model.Signalement;
+
 import com.tsaratanana.signalisation.model.TypeSignal;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
