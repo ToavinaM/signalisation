@@ -27,7 +27,7 @@ public interface ServiceMobile {
 
     Integer inscription (String login, String nom, String mdp)throws Exception ;
     Utilisateur login(String login, String mdp)throws Exception;
-    List<Signal> signalRegions()throws Exception; 
+    List<Signal> signals(String id)throws Exception; 
     Integer addsignal  (int idUtilisateur,int idtypeSignal,String description,String photo,Double lat,Double lng,int idRegion,String subUrb,String province ) throws Exception ;
     JSONObject readJsonFromUrl(String url) throws IOException, JSONException ;
     String readAll(Reader rd) throws IOException;

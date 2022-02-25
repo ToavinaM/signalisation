@@ -6,22 +6,30 @@
 package com.tsaratanana.signalisation.model;
 
 import java.sql.Timestamp;
-
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Lob;
 
 /**
  *
  * @author zola
  */
-public class Signal {
-  
-   int idSignal;
+@Entity
+public class Signal2 {
+
+   @Id
+   @GeneratedValue(strategy=GenerationType.AUTO)
+    int idSignal;
    int idtypeSignal;
    int idUtilisateur;
    int idRegion;
    String nomSignal;
    String nomRegion;       
    String description;
-   String photo;
+   @Lob
+   byte[] photo;
    Timestamp dateSignal;
    Double lat;
    Double lng;
@@ -30,33 +38,6 @@ public class Signal {
    Timestamp lastUpdate;
    String lastStatus;
 
-    public Signal(int idSignal, int idtypeSignal, int idUtilisateur, int idRegion, String nomSignal, String nomRegion, String description, String photo, Timestamp dateSignal, Double lat, Double lng, String subUrb, String province, Timestamp lastUpdate, String lastStatus) {
-        this.idSignal = idSignal;
-        this.idtypeSignal = idtypeSignal;
-        this.idUtilisateur = idUtilisateur;
-        this.idRegion = idRegion;
-        this.nomSignal = nomSignal;
-        this.nomRegion = nomRegion;
-        this.description = description;
-        this.photo = photo;
-        this.dateSignal = dateSignal;
-        this.lat = lat;
-        this.lng = lng;
-        this.subUrb = subUrb;
-        this.province = province;
-        this.lastUpdate = lastUpdate;
-        this.lastStatus = lastStatus;
-    }
-
-    public int getIdUtilisateur() {
-        return idUtilisateur;
-    }
-
-    public void setIdUtilisateur(int idUtilisateur) {
-        this.idUtilisateur = idUtilisateur;
-    }
-
-   
     public int getIdSignal() {
         return idSignal;
     }
@@ -71,6 +52,14 @@ public class Signal {
 
     public void setIdtypeSignal(int idtypeSignal) {
         this.idtypeSignal = idtypeSignal;
+    }
+
+    public int getIdUtilisateur() {
+        return idUtilisateur;
+    }
+
+    public void setIdUtilisateur(int idUtilisateur) {
+        this.idUtilisateur = idUtilisateur;
     }
 
     public int getIdRegion() {
@@ -105,11 +94,11 @@ public class Signal {
         this.description = description;
     }
 
-    public String getPhoto() {
+    public byte[] getPhoto() {
         return photo;
     }
 
-    public void setPhoto(String photo) {
+    public void setPhoto(byte[] photo) {
         this.photo = photo;
     }
 
@@ -168,12 +157,8 @@ public class Signal {
     public void setLastStatus(String lastStatus) {
         this.lastStatus = lastStatus;
     }
-   
-   
-   
-   
-   
-  
+
+    
    
  
     

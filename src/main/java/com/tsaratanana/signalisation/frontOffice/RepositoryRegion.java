@@ -13,4 +13,5 @@ public interface RepositoryRegion {
     
     Region login(String login, String mdp)throws Exception;
     List<Signal> signalRegions(String idRegion)throws Exception;  
+    
 }
