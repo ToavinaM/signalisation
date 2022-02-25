@@ -3,8 +3,6 @@ package com.tsaratanana.signalisation.mobile;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import static com.tsaratanana.signalisation.frontOffice.FrontController.verifierTokenAdmin;
 import com.tsaratanana.signalisation.model.Region;
-import com.tsaratanana.signalisation.model.Signal;
-import com.tsaratanana.signalisation.model.Signal2;
 
 import com.tsaratanana.signalisation.model.TypeSignal;
 import io.jsonwebtoken.Claims;
@@ -14,16 +12,19 @@ import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.SignatureException;
 import io.jsonwebtoken.UnsupportedJwtException;
+import java.io.IOException;
+//import java.sql.Date;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import com.tsaratanana.signalisation.model.Utilisateur;
+import java.io.File;
+import java.io.FileInputStream;
 import java.sql.Blob;
-import java.sql.Timestamp;
-import java.util.Arrays;
 import java.util.List;
 import javax.sql.rowset.serial.SerialBlob;
+import org.apache.tomcat.util.codec.binary.Base64;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -38,7 +39,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-
 /**
  *
  * @author zola
@@ -49,43 +49,36 @@ import org.springframework.web.multipart.MultipartFile;
 public class MobileController {
     @Autowired
     ServiceMobile serv;
-    @Autowired
-    sourceRepository source;
-
-    public MobileController(ServiceMobile serv, sourceRepository source) {
-        this.serv = serv;
-        this.source = source;
-    }
-    
-    
    
    
-     @PostMapping("/newsignal")
-   ResponseEntity<Map<String,Object>> newSignal(HttpServletRequest request, String authHeader,@RequestParam MultipartFile multipartImage,@RequestParam String newSignal) throws Exception {
-     Map<String,Object> map = new HashMap<>();
-    try{
-     Signal2 nouv = new Signal2();
-     ObjectMapper objm=new ObjectMapper();
-     nouv = objm.readValue(newSignal, Signal2.class);
-     nouv.setIdUtilisateur(1);
-     nouv.setLastStatus("Nouveau");
-     Date date = new Date();  
-    Timestamp ts=new Timestamp(date.getTime());  
-     nouv.setDateSignal(ts);
-     nouv.setLastUpdate(ts);
-     nouv.setPhoto(multipartImage.getBytes());
-    //System.out.println(Arrays.toString(multipartImage.getBytes()));
-    Signal2 liste= source.save(nouv);         map.put("message", "liste SIGNL");
-                  map.put("status", "200");
-                  map.put("data",liste);
-                  return new ResponseEntity<>(map,HttpStatus.OK);
-     }
-     catch(Exception exce){
-       map.put("status", "400");
-           map.put("message", exce);
-           return new ResponseEntity<>(map,HttpStatus.OK);
-     }
-   }
+//      @PostMapping("/newsignal")
+//   ResponseEntity<Map<String,Object>> newSignal(HttpServletRequest request, String authHeader,@RequestParam MultipartFile multipartImage,@RequestParam String newSignal) throws Exception {
+//     Map<String,Object> map = new HashMap<>();
+//     Signalement nouv = new Signalement();
+    
+//       try{
+      
+//         ObjectMapper objm=new ObjectMapper();
+        
+//         nouv = objm.readValue(newSignal, Signalement.class);
+        
+//         nouv.setIdpersonne(1);
+//         nouv.setDateheure(new Date());
+//         System.out.println("dsssssssssssssssssssssssssssssssssssssssssssss");
+//         nouv.setImage(multipartImage.getBytes());
+//         System.out.println(multipartImage.getBytes());
+//         Signalement liste= repository1.save(nouv);
+//         map.put("message", "liste SIGNL");
+//                     map.put("status", "200");
+//                     map.put("data",liste);
+//                     return new ResponseEntity<>(map,HttpStatus.OK);
+//     }
+//     catch(Exception exce){
+//       map.put("status", "400");
+//           map.put("message", exce);
+//           return new ResponseEntity<>(map,HttpStatus.OK);
+//     }
+//   }
     @GetMapping("/regions")
     public ResponseEntity<Map<String,Object>> regions () {
         Map<String,Object> map = new HashMap<>();
@@ -125,7 +118,7 @@ public class MobileController {
         Map<String,String> map = new HashMap<>();
         try {
                 Utilisateur region = serv.login(log, passwords);
-                map=generateJWTTokenUtilisateur(region);
+                map=generateJWTToken(region);
                 return new ResponseEntity<>(map, HttpStatus.OK);
         }catch(Exception e) {
                 map.put("message", e.getMessage());
@@ -151,28 +144,27 @@ public class MobileController {
     
     
 
-   
-    
-    @PostMapping("user/signal1/{idUtilisateur}")
-    public ResponseEntity<Map<String,String>> ajoutsignal(HttpServletRequest request,@PathVariable("idUtilisateur") String idUtilisateur,@RequestBody Map<Object, Object> mety,@RequestHeader(name = "Authorization") String authHeader) throws Exception{
+     @PostMapping("user/signal1/{idUtilisateur}")
+    public ResponseEntity<Map<String,String>> ajoutsignal(@PathVariable("idUtilisateur") String idUtilisateur,@RequestBody Map<Object, Object> mety) throws Exception{
             Map<String,String> map = new HashMap<>();
             int idtypeSignal=Integer.parseInt(mety.get("idtypeSignal").toString());
             String description=mety.get("description").toString();
             String photo=mety.get("photo").toString();
+           byte[] byteData = photo.getBytes("UTF-8");//Better to specify encoding
+            Blob blob = new SerialBlob(byteData);
            Double lat=Double.parseDouble(mety.get("lat").toString());
-         
+           System.out.println(blob);
+               System.out.println(blob.toString());
             Double lng=Double.parseDouble(mety.get("lng").toString());
             int idRegion=Integer.parseInt(mety.get("region").toString());
             String province=mety.get("province").toString();
             String subUrb=mety.get("subUrb").toString();
             
-            
              System.out.println("*******TAFIDITRA TAFIDITRA*******----"+lat+"----"+lng+"----"+idUtilisateur+"----"+idtypeSignal+"----"+photo+"----"+idRegion+"----"+province);
             
              try{
-                verifierTokenUtlisateur(authHeader, request);
-                System.out.println("MANDE NY ITOOOOOOidUtilisateur  "+request.getAttribute("idAdmin"));
-                Integer id=serv.addsignal(Integer.parseInt(request.getAttribute("idAdmin").toString()), idtypeSignal, description,photo, lat, lng, idRegion, subUrb, province);
+                
+                Integer id=serv.addsignal(Integer.parseInt(idUtilisateur), idtypeSignal, description,photo, lat, lng, idRegion, subUrb, province);
                 map.put("message", "Add successfuly");
                 map.put("idSignal",id.toString());
                 return new ResponseEntity<>(map, HttpStatus.OK);
@@ -186,7 +178,6 @@ public class MobileController {
         return new ResponseEntity<>(map, HttpStatus.NOT_FOUND);
     }	
     }
-     
      
 
     
@@ -222,34 +213,14 @@ public class MobileController {
     }	
     }
     
-    @GetMapping("user/signals")
-	public ResponseEntity<Map<String,Object>> signals (HttpServletRequest request,@RequestHeader(name = "Authorization") String authHeader) {
-		Map<String,Object> map = new HashMap<>();
-		try {
-                   verifierTokenUtlisateur(authHeader, request);
-                    System.out.println("MANDE NY ITOOOOOOidUtilisateur  "+request.getAttribute("idAdmin"));
-                    System.out.println("MANDE NY ITOOOOOOO"+request.getAttribute("idAdmin"));
-                    List<Signal> listSignals=serv.signals(request.getAttribute("idAdmin").toString());
-                    map.put("message", "liste SIGNL");
-                    map.put("status", "200");
-                    map.put("data",listSignals);
-                    return new ResponseEntity<>(map,HttpStatus.OK);
-		} catch (Exception e) {
-                    map.put("status", "400");
-                    map.put("message", e.getMessage());
-                    return new ResponseEntity<>(map,HttpStatus.OK);
-		}
-	}
     
-   
-        
-    private Map<String,String> generateJWTTokenUtilisateur(Utilisateur user){
+    private Map<String,String> generateJWTToken(Utilisateur user){
         long timestamp = System.currentTimeMillis();
-        System.out.println("********************************************** "+ user.getIdUtilisateur() );
-        java.sql.Date date = new java.sql.Date(timestamp+30000000);
+        Date date = new Date(timestamp+30000000);
         String token = Jwts.builder().signWith(SignatureAlgorithm.HS256,"token")
-            .setIssuedAt(new java.sql.Date(timestamp))
-            .claim("idAdmin",user.getIdUtilisateur())
+            .setIssuedAt(new Date(timestamp))
+         ///.setExpiration(date)
+            .claim("idUtilisateur",user.getIdUtilisateur())
             .claim("login",user.getLogin())
             .claim("mdp",user.getMdp())
             .compact();
@@ -261,7 +232,7 @@ public class MobileController {
     }
     
     
-    public static void verifierTokenUtlisateur(String authHeader,HttpServletRequest request)throws Exception{
+    public static void verifierTokenAdmin(String authHeader,HttpServletRequest request)throws Exception{
         String[] authHeaderArr = authHeader.split("Bearer");
         System.err.println("--"+authHeaderArr[1]);
         if(authHeaderArr.length>1 && authHeaderArr[1]!=null) {
@@ -270,7 +241,7 @@ public class MobileController {
                 System.out.println("com.tsaratanana.signalisation.controller.BackController.verifierTokenAdmin()");
                     Claims claims = Jwts.parser().setSigningKey("token")
                                     .parseClaimsJws(token).getBody();
-                    request.setAttribute("idAdmin", Integer.parseInt(claims.get("idAdmin").toString()));
+                    request.setAttribute("idUtilisateur", Integer.parseInt(claims.get("idUtilisateur").toString()));
             } catch (ExpiredJwtException | MalformedJwtException | SignatureException | UnsupportedJwtException | IllegalArgumentException e) {
                     // TODO: handle exception
                     throw new Exception("Token invalid/expired 1");
@@ -279,12 +250,6 @@ public class MobileController {
                 throw new Exception("Token invalid/expired 2");
         }
     }
-    
-    
-    
-    
-    
-    
     
     
     

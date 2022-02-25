@@ -72,6 +72,8 @@ public class FrontController {
         try {
                 Region region = serv.login(log, passwords);
                 map=generateJWTToken(region);
+                 map.put("profil","region");
+                 map.put("status", "200");
                 return new ResponseEntity<>(map, HttpStatus.OK);
         }catch(Exception e) {
                 map.put("message", e.getMessage());

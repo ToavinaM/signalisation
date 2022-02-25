@@ -7,13 +7,12 @@ package com.tsaratanana.signalisation.model;
 
 import java.sql.Timestamp;
 
-
 /**
  *
  * @author zola
  */
 public class Signal {
-  
+
    int idSignal;
    int idtypeSignal;
    int idUtilisateur;

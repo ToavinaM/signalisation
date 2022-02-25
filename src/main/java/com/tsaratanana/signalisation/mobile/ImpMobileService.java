@@ -29,17 +29,23 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 @Transactional
-public class ImpMobileService implements ServiceMobile {     
+public class ImpMobileService implements ServiceMobile{    
     @Autowired
    RepositoryMobile rep; 
-  
-   @Override
+ 
+    @Override
     public Utilisateur login(String login, String mdp) throws Exception {
         return rep.login(login, mdp);
         
     }
 
-   
+    @Override
+    public List<Signal> signalRegions() throws Exception {
+        return rep.signals();
+    }
+    
+    
+    
     
     @Override
     public JSONObject readJsonFromUrl(String url) throws IOException, JSONException {
@@ -102,10 +108,5 @@ public class ImpMobileService implements ServiceMobile {
     @Override
     public List<TypeSignal> findTypeSignal() throws Exception {
           return rep.findTypeSignal();
-    }
-
-    @Override
-    public List<Signal> signals(String id) throws Exception {
-        return rep.signals(id);
     }
 }
