@@ -154,7 +154,7 @@ public class MobileController {
    
     
     @PostMapping("user/signal1/{idUtilisateur}")
-    public ResponseEntity<Map<String,String>> ajoutsignal(HttpServletRequest request,@PathVariable("idUtilisateur") String idUtilisateur,@RequestBody Map<Object, Object> mety,@RequestHeader(name = "Authorization") String authHeader) throws Exception{
+    public ResponseEntity<Map<String,String>> ajoutsignal(HttpServletRequest request,@PathVariable("idUtilisateur") String idUtilisateur,@RequestBody Map<Object, Object> mety) throws Exception{
             Map<String,String> map = new HashMap<>();
             int idtypeSignal=Integer.parseInt(mety.get("idtypeSignal").toString());
             String description=mety.get("description").toString();
@@ -170,9 +170,9 @@ public class MobileController {
              System.out.println("*******TAFIDITRA TAFIDITRA*******----"+lat+"----"+lng+"----"+idUtilisateur+"----"+idtypeSignal+"----"+photo+"----"+idRegion+"----"+province);
             
              try{
-                verifierTokenUtlisateur(authHeader, request);
-                System.out.println("MANDE NY ITOOOOOOidUtilisateur  "+request.getAttribute("idAdmin"));
-                Integer id=serv.addsignal(Integer.parseInt(request.getAttribute("idAdmin").toString()), idtypeSignal, description,photo, lat, lng, idRegion, subUrb, province);
+//                 verifierTokenUtlisateur(authHeader, request);
+                System.out.println("MANDE NY ITOOOOOOidUtilisateur  "+idUtilisateur/*request.getAttribute("idAdmin")*/);
+                Integer id=serv.addsignal(Integer.parseInt(idUtilisateur), idtypeSignal, description,photo, lat, lng, idRegion, subUrb, province);
                 map.put("message", "Add successfuly");
                 map.put("idSignal",id.toString());
                 return new ResponseEntity<>(map, HttpStatus.OK);
