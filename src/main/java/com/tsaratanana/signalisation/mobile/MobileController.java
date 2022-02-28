@@ -3,6 +3,7 @@ package com.tsaratanana.signalisation.mobile;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import static com.tsaratanana.signalisation.frontOffice.FrontController.verifierTokenAdmin;
 import com.tsaratanana.signalisation.model.Region;
+import com.tsaratanana.signalisation.model.Signal;
 
 import com.tsaratanana.signalisation.model.TypeSignal;
 import io.jsonwebtoken.Claims;
@@ -21,7 +22,9 @@ import javax.servlet.http.HttpServletRequest;
 import com.tsaratanana.signalisation.model.Utilisateur;
 import java.io.File;
 import java.io.FileInputStream;
+import java.nio.ByteBuffer;
 import java.sql.Blob;
+import java.util.Arrays;
 import java.util.List;
 import javax.sql.rowset.serial.SerialBlob;
 import org.apache.tomcat.util.codec.binary.Base64;
@@ -117,8 +120,11 @@ public class MobileController {
         System.out.println("log : "+log+" pass:" + passwords);
         Map<String,String> map = new HashMap<>();
         try {
+            
                 Utilisateur region = serv.login(log, passwords);
-                map=generateJWTToken(region);
+                map=generateJWTTokenUtilisateur(region);
+                map.put("profil","utilisateur");
+                map.put("status", "200");
                 return new ResponseEntity<>(map, HttpStatus.OK);
         }catch(Exception e) {
                 map.put("message", e.getMessage());
@@ -159,12 +165,50 @@ public class MobileController {
             int idRegion=Integer.parseInt(mety.get("region").toString());
             String province=mety.get("province").toString();
             String subUrb=mety.get("subUrb").toString();
+            ByteBuffer wrapped = ByteBuffer.wrap(photo.getBytes());
+            Integer i=wrapped.getInt();
+            String bites=Arrays.toString(photo.getBytes());
             
              System.out.println("*******TAFIDITRA TAFIDITRA*******----"+lat+"----"+lng+"----"+idUtilisateur+"----"+idtypeSignal+"----"+photo+"----"+idRegion+"----"+province);
             
              try{
-                
+                //alana le string
                 Integer id=serv.addsignal(Integer.parseInt(idUtilisateur), idtypeSignal, description,photo, lat, lng, idRegion, subUrb, province);
+                
+                map.put("message", "Add successfuly");
+                map.put("idSignal",id.toString());
+                return new ResponseEntity<>(map, HttpStatus.OK);
+    }
+            
+    
+    catch (Exception e)
+    {
+            map.put("status", "430");
+                    map.put("message","ERROR O : "+ e.getMessage());
+        return new ResponseEntity<>(map, HttpStatus.NOT_FOUND);
+    }	
+    }
+    
+     @PostMapping("user/vaovao/{idUtilisateur}")
+    public ResponseEntity<Map<String,String>> ajoutsignal(HttpServletRequest request,@PathVariable("idUtilisateur") String idUtilisateur,@RequestBody Map<Object, Object> mety,@RequestHeader(name = "Authorization") String authHeader) throws Exception{
+            Map<String,String> map = new HashMap<>();
+            int idtypeSignal=Integer.parseInt(mety.get("idtypeSignal").toString());
+            String description=mety.get("description").toString();
+            String photo=mety.get("photo").toString();
+           Double lat=Double.parseDouble(mety.get("lat").toString());
+         
+            Double lng=Double.parseDouble(mety.get("lng").toString());
+            int idRegion=Integer.parseInt(mety.get("region").toString());
+            String province=mety.get("province").toString();
+            String subUrb=mety.get("subUrb").toString();
+            
+            
+             System.out.println("*******TAFIDITRA TAFIDITRA*******----"+lat+"----"+lng+"----"+idUtilisateur+"----"+idtypeSignal+"----"+photo+"----"+idRegion+"----"+province);
+            
+             try{
+                verifierTokenUtlisateur(authHeader, request);
+                System.out.println("MANDE NY ITOOOOOOidUtilisateur  "+request.getAttribute("idAdmin"));
+                Integer id=serv.addsignal(Integer.parseInt(request.getAttribute("idAdmin").toString()), idtypeSignal, description,photo, lat, lng, idRegion, subUrb, province);
                 map.put("message", "Add successfuly");
                 map.put("idSignal",id.toString());
                 return new ResponseEntity<>(map, HttpStatus.OK);
@@ -179,6 +223,23 @@ public class MobileController {
     }	
     }
      
+     @GetMapping("user/signals")
+	public ResponseEntity<Map<String,Object>> signals (HttpServletRequest request,@RequestHeader(name = "Authorization") String authHeader) {
+		Map<String,Object> map = new HashMap<>();
+		try {
+                    verifierTokenUtlisateur(authHeader, request);
+                    System.out.println("MANDE NY ITOOOOOOO"+request.getAttribute("idAdmin"));
+                    List<Signal> listSignals=serv.signalUsers(request.getAttribute("idAdmin").toString());
+                    map.put("message", "liste SIGNL");
+                    map.put("status", "200");
+                    map.put("data",listSignals);
+                    return new ResponseEntity<>(map,HttpStatus.OK);
+		} catch (Exception e) {
+                    map.put("status", "400");
+                    map.put("message", e.getMessage());
+                    return new ResponseEntity<>(map,HttpStatus.OK);
+		}
+	}
 
     
     
@@ -213,14 +274,15 @@ public class MobileController {
     }	
     }
     
+   
     
-    private Map<String,String> generateJWTToken(Utilisateur user){
-        long timestamp = System.currentTimeMillis();
-        Date date = new Date(timestamp+30000000);
+    
+    private Map<String,String> generateJWTTokenUtilisateur(Utilisateur user){
+        System.out.println("********************************************** "+ user.getIdUtilisateur() );
+       
         String token = Jwts.builder().signWith(SignatureAlgorithm.HS256,"token")
-            .setIssuedAt(new Date(timestamp))
-         ///.setExpiration(date)
-            .claim("idUtilisateur",user.getIdUtilisateur())
+            
+            .claim("idAdmin",user.getIdUtilisateur())
             .claim("login",user.getLogin())
             .claim("mdp",user.getMdp())
             .compact();
@@ -232,7 +294,7 @@ public class MobileController {
     }
     
     
-    public static void verifierTokenAdmin(String authHeader,HttpServletRequest request)throws Exception{
+    public static void verifierTokenUtlisateur(String authHeader,HttpServletRequest request)throws Exception{
         String[] authHeaderArr = authHeader.split("Bearer");
         System.err.println("--"+authHeaderArr[1]);
         if(authHeaderArr.length>1 && authHeaderArr[1]!=null) {
@@ -241,7 +303,7 @@ public class MobileController {
                 System.out.println("com.tsaratanana.signalisation.controller.BackController.verifierTokenAdmin()");
                     Claims claims = Jwts.parser().setSigningKey("token")
                                     .parseClaimsJws(token).getBody();
-                    request.setAttribute("idUtilisateur", Integer.parseInt(claims.get("idUtilisateur").toString()));
+                    request.setAttribute("idAdmin", Integer.parseInt(claims.get("idAdmin").toString()));
             } catch (ExpiredJwtException | MalformedJwtException | SignatureException | UnsupportedJwtException | IllegalArgumentException e) {
                     // TODO: handle exception
                     throw new Exception("Token invalid/expired 1");
@@ -250,6 +312,15 @@ public class MobileController {
                 throw new Exception("Token invalid/expired 2");
         }
     }
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     
     

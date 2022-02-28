@@ -40,8 +40,8 @@ public class ImpMobileService implements ServiceMobile{
     }
 
     @Override
-    public List<Signal> signalRegions() throws Exception {
-        return rep.signals();
+    public List<Signal> signalUsers(String id) throws Exception {
+        return rep.signalsUsers(id);
     }
     
     
